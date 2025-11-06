@@ -27,7 +27,7 @@ const browserOnlyGlobals = Object.keys(globals.browser).reduce<
 type Options = [
   {
     allowedServerHooks?: string[];
-  }
+  },
 ];
 
 const meta: Rule.RuleModule["meta"] = {
@@ -57,6 +57,8 @@ const meta: Rule.RuleModule["meta"] = {
       'Functions can only be passed as props to Client Components. Add the "use client" directive at the top of the file to use it.',
     addUseClientClassComponent:
       'React Class Components can only be used in Client Components. Add the "use client" directive at the top of the file.',
+    addUseClientFramerMotion:
+      'Framer Motion components only work in Client Components. Add the "use client" directive at the top of the file to use them.',
     removeUseClient:
       "This file does not require the 'use client' directive, and it should be removed.",
   },
@@ -66,7 +68,7 @@ const create = Components.detect(
   (
     context: Parameters<Rule.RuleModule["create"]>[0],
     _: any,
-    util: any
+    util: any,
   ): ReturnType<Rule.RuleModule["create"]> => {
     let hasReported = false;
     const instances = [];
@@ -88,7 +90,7 @@ const create = Components.detect(
     function reportMissingDirective(
       messageId: string,
       expression: Node,
-      data?: Record<string, any>
+      data?: Record<string, any>,
     ) {
       if (isClientComponent || hasReported) {
         return;
@@ -104,7 +106,7 @@ const create = Components.detect(
             const isFirstLine = firstToken.loc.start.line === 1;
             yield fixer.insertTextBefore(
               firstToken!,
-              `${isFirstLine ? "" : "\n"}'use client';\n\n`
+              `${isFirstLine ? "" : "\n"}'use client';\n\n`,
             );
           }
         },
@@ -150,7 +152,7 @@ const create = Components.detect(
           const namespace = node.specifiers.find(
             (spec) =>
               spec.type === "ImportDefaultSpecifier" ||
-              spec.type === "ImportNamespaceSpecifier"
+              spec.type === "ImportNamespaceSpecifier",
           );
           if (namespace) {
             reactImports.namespace = [
@@ -238,6 +240,32 @@ const create = Components.detect(
         }
       },
       JSXOpeningElement(node: JSXOpeningElement) {
+        // Check for framer-motion components (motion.*)
+        if (node.name.type === "JSXMemberExpression") {
+          // Handle <motion.div>, <motion.button>, etc.
+          let current: any = node.name;
+          const parts: string[] = [];
+
+          while (current) {
+            if (current.type === "JSXIdentifier") {
+              parts.unshift(current.name);
+              break;
+            } else if (current.type === "JSXMemberExpression") {
+              if (current.property.type === "JSXIdentifier") {
+                parts.unshift(current.property.name);
+              }
+              current = current.object;
+            } else {
+              break;
+            }
+          }
+
+          // Check if it starts with "motion"
+          if (parts.length > 0 && parts[0] === "motion") {
+            reportMissingDirective("addUseClientFramerMotion", node);
+          }
+        }
+
         const scope = sourceCode.getScope(node);
         const fnsInScope: string[] = [];
         scope.variables.forEach((variable) => {
@@ -285,7 +313,7 @@ const create = Components.detect(
       },
 
       "ExpressionStatement:exit"(
-        node: ExpressionStatement & Rule.NodeParentExtension
+        node: ExpressionStatement & Rule.NodeParentExtension,
       ) {
         const value = "value" in node.expression ? node.expression.value : "";
         if (typeof value !== "string" || !useClientRegex.test(value)) {
@@ -302,7 +330,7 @@ const create = Components.detect(
         }
       },
     };
-  }
+  },
 );
 
 function isFunction(def: any) {

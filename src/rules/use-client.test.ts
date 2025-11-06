@@ -354,5 +354,54 @@ function App() {
         ],
       });
     });
+
+    describe("framer-motion", () => {
+      ruleTester.run("FRAMER MOTION", rule, {
+        valid: [
+          {
+            code: `'use client';
+import { motion } from 'framer-motion';
+export function App() {
+  return <motion.div>Hello</motion.div>;
+}`,
+          },
+          {
+            code: `'use client';
+import { motion } from 'framer-motion';
+export function App() {
+  return <motion.button>Click me</motion.button>;
+}`,
+          },
+        ],
+        invalid: [
+          {
+            code: `import { motion } from 'framer-motion';
+export function App() {
+  return <motion.div>Hello</motion.div>;
+}`,
+            errors: [{ messageId: "addUseClientFramerMotion" }],
+            output: `'use client';
+
+import { motion } from 'framer-motion';
+export function App() {
+  return <motion.div>Hello</motion.div>;
+}`,
+          },
+          {
+            code: `import { motion } from 'framer-motion';
+export function App() {
+  return <motion.button>Click me</motion.button>;
+}`,
+            errors: [{ messageId: "addUseClientFramerMotion" }],
+            output: `'use client';
+
+import { motion } from 'framer-motion';
+export function App() {
+  return <motion.button>Click me</motion.button>;
+}`,
+          },
+        ],
+      });
+    });
   });
 });
