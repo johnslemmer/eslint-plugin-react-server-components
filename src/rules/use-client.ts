@@ -11,8 +11,8 @@ import type {
 import globals from "globals";
 import { reactEvents } from "./react-events";
 import { JSXOpeningElement } from "estree-jsx";
-import Components from "eslint-plugin-react/lib/util/Components";
-import componentUtil from "eslint-plugin-react/lib/util/componentUtil";
+import Components from "eslint-plugin-react/lib/util/Components.js";
+import componentUtil from "eslint-plugin-react/lib/util/componentUtil.js";
 
 const useClientRegex = /^('|")use client('|")/;
 const browserOnlyGlobals = Object.keys(globals.browser).reduce<

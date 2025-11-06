@@ -16,3 +16,9 @@ export const configs = {
     },
   },
 };
+
+// Default export for ESLint 9 flat config
+export default {
+  rules,
+  configs,
+};
