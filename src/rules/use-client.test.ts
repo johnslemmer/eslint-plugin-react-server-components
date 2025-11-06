@@ -4,10 +4,12 @@ import { RuleTester } from "eslint";
 import { ClientComponents as rule } from "./use-client";
 
 const ruleTester = new RuleTester({
-  parserOptions: {
+  languageOptions: {
     ecmaVersion: 6,
     sourceType: "module",
-    ecmaFeatures: { jsx: true },
+    parserOptions: {
+      ecmaFeatures: { jsx: true },
+    },
   },
   settings: {
     react: {

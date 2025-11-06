@@ -11,9 +11,7 @@ import type {
 import globals from "globals";
 import { reactEvents } from "./react-events";
 import { JSXOpeningElement } from "estree-jsx";
-// @ts-expect-error
 import Components from "eslint-plugin-react/lib/util/Components";
-// @ts-expect-error
 import componentUtil from "eslint-plugin-react/lib/util/componentUtil";
 
 const useClientRegex = /^('|")use client('|")/;
@@ -132,7 +130,7 @@ const create = Components.detect(
         }
 
         parentNode = node;
-        const scope = context.getScope();
+        const scope = sourceCode.getScope(node);
         // Collect undeclared variables (ie, used global variables)
         scope.through.forEach((reference) => {
           undeclaredReferences.add(reference.identifier.name);
@@ -145,7 +143,9 @@ const create = Components.detect(
             .filter((spec) => spec.type === "ImportSpecifier")
             .forEach((spac: any) => {
               const spec = spac as ImportSpecifier;
-              reactImports[spec.local.name] = spec.imported.name;
+              reactImports[spec.local.name] = (
+                spec.imported as Identifier
+              ).name;
             });
           const namespace = node.specifiers.find(
             (spec) =>
@@ -185,7 +185,7 @@ const create = Components.detect(
         if (
           isClientOnlyHook(name) &&
           // Is in a function...
-          context.getScope().type === "function" &&
+          sourceCode.getScope(expression).type === "function" &&
           // But only if that function is a component
           Boolean(util.getParentComponent(expression))
         ) {
@@ -207,7 +207,7 @@ const create = Components.detect(
         // }
         // @ts-expect-error
         const name = node.object.name;
-        const scopeType = context.getScope().type;
+        const scopeType = sourceCode.getScope(node).type;
         if (
           undeclaredReferences.has(name) &&
           browserOnlyGlobals.has(name) &&
@@ -237,9 +237,8 @@ const create = Components.detect(
           });
         }
       },
-      // @ts-expect-error
       JSXOpeningElement(node: JSXOpeningElement) {
-        const scope = context.getScope();
+        const scope = sourceCode.getScope(node);
         const fnsInScope: string[] = [];
         scope.variables.forEach((variable) => {
           variable.defs.forEach((def) => {
@@ -316,4 +315,4 @@ function isFunction(def: any) {
   return false;
 }
 
-export const ClientComponents = { meta, create };
+export const ClientComponents: Rule.RuleModule = { meta, create } as any;
