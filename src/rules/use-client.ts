@@ -266,23 +266,6 @@ const create = Components.detect(
           }
         }
 
-        const scope = sourceCode.getScope(node);
-        const fnsInScope: string[] = [];
-        scope.variables.forEach((variable) => {
-          variable.defs.forEach((def) => {
-            if (isFunction(def)) {
-              fnsInScope.push(variable.name);
-            }
-          });
-        });
-        scope.upper?.set.forEach((variable) => {
-          variable.defs.forEach((def) => {
-            if (isFunction(def)) {
-              fnsInScope.push(variable.name);
-            }
-          });
-        });
-
         for (const attribute of node.attributes) {
           if (
             attribute.type === "JSXSpreadAttribute" ||
@@ -293,15 +276,6 @@ const create = Components.detect(
 
           if (reactEvents.includes(attribute.name.name as string)) {
             reportMissingDirective("addUseClientCallbacks", attribute.name);
-          }
-
-          if (
-            attribute.value?.expression.type === "ArrowFunctionExpression" ||
-            attribute.value?.expression.type === "FunctionExpression" ||
-            (attribute.value.expression.type === "Identifier" &&
-              fnsInScope.includes(attribute.value.expression.name))
-          ) {
-            reportMissingDirective("addUseClientCallbacks", attribute);
           }
         }
       },
@@ -332,15 +306,5 @@ const create = Components.detect(
     };
   },
 );
-
-function isFunction(def: any) {
-  if (def.type === "FunctionName") {
-    return true;
-  }
-  if (def.node.init && def.node.init.type === "ArrowFunctionExpression") {
-    return true;
-  }
-  return false;
-}
 
 export const ClientComponents: Rule.RuleModule = { meta, create } as any;
