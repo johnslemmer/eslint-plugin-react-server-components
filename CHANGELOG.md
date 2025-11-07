@@ -1,5 +1,11 @@
 # eslint-plugin-react-server-components
 
+## 2.1.0
+
+### Minor Changes
+
+- remove the logic around functions passed as props
+
 ## 2.0.0
 
 ### Major Changes
