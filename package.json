@@ -1,6 +1,6 @@
 {
-  "name": "eslint-plugin-react-server-components",
-  "version": "1.2.0",
+  "name": "@johnslemmer/eslint-plugin-react-server-components",
+  "version": "2.0.0",
   "description": "Rules for React server components",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -26,7 +26,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/roginfarrer/eslint-plugin-react-client-components.git"
+    "url": "git+https://github.com/johnslemmer/eslint-plugin-react-server-components.git"
   },
   "keywords": [
     "eslint-plugin",
@@ -34,12 +34,12 @@
     "react",
     "next.js"
   ],
-  "author": "Rogin Farrer <rogin@roginfarrer.com>",
+  "author": "John Slemmer",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/roginfarrer/eslint-plugin-react-server-components/issues"
+    "url": "https://github.com/johnslemmer/eslint-plugin-react-server-components/issues"
   },
-  "homepage": "https://github.com/roginfarrer/eslint-plugin-react-server-components#readme",
+  "homepage": "https://github.com/johnslemmer/eslint-plugin-react-server-components#readme",
   "devDependencies": {
     "@changesets/cli": "^2.26.2",
     "@types/eslint": "^9.0.0",

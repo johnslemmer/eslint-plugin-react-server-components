@@ -1,5 +1,11 @@
 # eslint-plugin-react-server-components
 
+## 2.0.0
+
+### Major Changes
+
+- Bumping plugin for use with eslint >9 as well as other small features
+
 ## 1.2.0
 
 ### Minor Changes
